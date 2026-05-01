@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Clinical Decision Support System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: cases
+    description: Patient case management
 paths:
   /healthz:
     get:
@@ -24,6 +26,182 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /cases:
+    get:
+      operationId: listCases
+      tags: [cases]
+      summary: List all patient cases
+      responses:
+        "200":
+          description: List of cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientCase"
+    post:
+      operationId: createCase
+      tags: [cases]
+      summary: Create a new patient case
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCaseBody"
+      responses:
+        "201":
+          description: Created case
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientCase"
+
+  /cases/{id}:
+    get:
+      operationId: getCase
+      tags: [cases]
+      summary: Get a patient case by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Patient case
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientCaseWithAnalysis"
+        "404":
+          description: Not found
+    put:
+      operationId: updateCase
+      tags: [cases]
+      summary: Update a patient case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCaseBody"
+      responses:
+        "200":
+          description: Updated case
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientCase"
+    delete:
+      operationId: deleteCase
+      tags: [cases]
+      summary: Delete a patient case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /cases/{id}/analyses:
+    get:
+      operationId: listCaseAnalyses
+      tags: [cases]
+      summary: List all analyses for a case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of analyses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CaseAnalysis"
+
+  /cases/{id}/analyze:
+    post:
+      operationId: analyzeCase
+      tags: [cases]
+      summary: Run AI analysis on a patient case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: AI analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseAnalysis"
+        "404":
+          description: Not found
+
+  /transcribe:
+    post:
+      operationId: transcribeAudioStandalone
+      tags: [cases]
+      summary: Transcribe audio to text (standalone, no case required)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranscribeAudioBody"
+      responses:
+        "200":
+          description: Transcription result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscriptionResult"
+
+  /cases/{id}/transcribe:
+    post:
+      operationId: transcribeAudio
+      tags: [cases]
+      summary: Transcribe audio to text for a case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranscribeAudioBody"
+      responses:
+        "200":
+          description: Transcription result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscriptionResult"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +212,232 @@ components:
       required:
         - status
 
+    PatientCase:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientName:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        chiefComplaint:
+          type: string
+        symptoms:
+          type: string
+        medicalHistory:
+          type: string
+          nullable: true
+        medications:
+          type: string
+          nullable: true
+        allergies:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [pending, analyzed, emergency]
+        isEmergency:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - patientName
+        - chiefComplaint
+        - symptoms
+        - status
+        - isEmergency
+        - createdAt
+        - updatedAt
+
+    PatientCaseWithAnalysis:
+      allOf:
+        - $ref: "#/components/schemas/PatientCase"
+        - type: object
+          properties:
+            latestAnalysis:
+              $ref: "#/components/schemas/CaseAnalysis"
+              nullable: true
+
+    CreateCaseBody:
+      type: object
+      properties:
+        patientName:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        chiefComplaint:
+          type: string
+        symptoms:
+          type: string
+        medicalHistory:
+          type: string
+          nullable: true
+        medications:
+          type: string
+          nullable: true
+        allergies:
+          type: string
+          nullable: true
+      required:
+        - patientName
+        - chiefComplaint
+        - symptoms
+
+    UpdateCaseBody:
+      type: object
+      properties:
+        patientName:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        chiefComplaint:
+          type: string
+        symptoms:
+          type: string
+        medicalHistory:
+          type: string
+          nullable: true
+        medications:
+          type: string
+          nullable: true
+        allergies:
+          type: string
+          nullable: true
+
+    Diagnosis:
+      type: object
+      properties:
+        name:
+          type: string
+        confidence:
+          type: number
+        description:
+          type: string
+        icdCode:
+          type: string
+          nullable: true
+      required:
+        - name
+        - confidence
+        - description
+
+    SuggestedTest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [lab, imaging, other]
+        reason:
+          type: string
+        urgency:
+          type: string
+          enum: [routine, urgent, stat]
+      required:
+        - name
+        - type
+        - reason
+        - urgency
+
+    TreatmentOption:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [medication, procedure, lifestyle, referral]
+        description:
+          type: string
+        dosageRange:
+          type: string
+          nullable: true
+        contraindications:
+          type: string
+          nullable: true
+        interactions:
+          type: string
+          nullable: true
+      required:
+        - name
+        - type
+        - description
+
+    CaseAnalysis:
+      type: object
+      properties:
+        id:
+          type: integer
+        caseId:
+          type: integer
+        differentialDiagnoses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Diagnosis"
+        suggestedTests:
+          type: array
+          items:
+            $ref: "#/components/schemas/SuggestedTest"
+        treatments:
+          type: array
+          items:
+            $ref: "#/components/schemas/TreatmentOption"
+        followUpQuestions:
+          type: array
+          items:
+            type: string
+        isEmergency:
+          type: boolean
+        emergencyReason:
+          type: string
+          nullable: true
+        summary:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - caseId
+        - differentialDiagnoses
+        - suggestedTests
+        - treatments
+        - followUpQuestions
+        - isEmergency
+        - summary
+        - createdAt
+
+    TranscribeAudioBody:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+        mimeType:
+          type: string
+      required:
+        - audioBase64
+        - mimeType
+
+    TranscriptionResult:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+        - text

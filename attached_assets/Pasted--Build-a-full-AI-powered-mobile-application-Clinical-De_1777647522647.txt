@@ -1,0 +1,143 @@
+
+Build a full AI-powered mobile application (Clinical Decision Support System - CDSS) that assists doctors in analyzing patient conditions using both voice and text input, and provides intelligent medical insights.
+
+---
+
+🔹 Core Features:
+
+1. Dual Input System:
+
+The application must support two input methods:
+
+A. Voice Input:
+
+- Record patient or doctor speech
+- Convert speech to text using Speech-to-Text AI
+
+B. Text Input:
+
+- Manual entry of symptoms, history, and medical notes
+
+---
+
+2. AI Medical Analysis:
+
+After receiving input, the system must:
+
+- Use NLP to extract key medical entities (symptoms, duration, severity)
+- Analyze the case intelligently
+- Generate a list of possible diagnoses (Differential Diagnosis)
+- Assign a confidence level (%) for each diagnosis
+
+---
+
+3. Suggested Medical Tests:
+
+- Recommend required lab tests and imaging
+- Explain WHY each test is needed
+
+---
+
+4. Treatment Suggestions (IMPORTANT):
+
+- Suggest possible treatment options based on trusted medical guidelines
+
+- DO NOT provide final prescriptions
+
+- Include:
+  
+  - Medication names
+  - General dosage ranges (if safe)
+  - Contraindications
+  - Drug interactions
+
+- MUST display disclaimer:
+  “This system is for assistance only and does not replace professional medical judgment.”
+
+---
+
+5. Smart Follow-up Questions:
+
+The AI should ask intelligent follow-up questions dynamically to refine diagnosis.
+
+Example:
+User: “I have a headache”
+System asks:
+
+- Do you have fever?
+- How long have you had it?
+
+---
+
+🔹 Technical Requirements:
+
+Backend:
+
+- Python (FastAPI)
+- Modular architecture
+
+Frontend:
+
+- Flutter (mobile app UI)
+
+Database:
+
+- PostgreSQL
+
+---
+
+🔹 AI Components:
+
+- Speech-to-Text engine (e.g., Whisper or equivalent)
+- NLP processing module
+- Rule-based diagnosis engine (initial version)
+- Extendable to Machine Learning models
+
+---
+
+🔹 Security & Privacy:
+
+- Encrypt patient data
+- Follow best practices for medical data protection
+
+---
+
+🔹 VERY IMPORTANT (FULL TRANSPARENCY REQUIRED):
+
+Provide EVERYTHING needed to understand and run the system:
+
+1. Full source code (backend + frontend)
+2. Folder structure
+3. All libraries and frameworks used
+4. Explanation of each module:
+   - Voice processing
+   - NLP engine
+   - Diagnosis logic
+5. API documentation (with examples)
+6. Database schema design
+7. Sample test cases
+8. Comments inside the code
+9. Step-by-step setup instructions
+
+---
+
+🔹 Bonus Features:
+
+- Emergency alert system for critical symptoms
+- Patient timeline tracking
+- Expandable disease modules
+
+---
+
+🔹 Output Format:
+
+- Clean, production-ready code
+- Well-organized folders
+- README.md with full explanation
+- Clear instructions to run locally
+
+---
+
+🔹 Goal:
+
+The final product should behave like an intelligent medical assistant that supports doctors, not replaces them.

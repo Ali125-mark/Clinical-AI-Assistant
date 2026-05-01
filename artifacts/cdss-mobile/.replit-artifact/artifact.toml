@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "Clinical Decision Support System"
+version = "1.0.0"
+id = "artifacts/cdss-mobile"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/" ]
+localPort = 19679
+
+[services.development]
+run = "pnpm --filter @workspace/cdss-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cdss-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/cdss-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "19679"
+BASE_PATH = "/"
