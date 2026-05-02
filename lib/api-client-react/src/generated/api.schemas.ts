@@ -132,3 +132,42 @@ export interface TranscribeAudioBody {
 export interface TranscriptionResult {
   text: string;
 }
+
+export interface ChatSession {
+  id: number;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ChatMessageRole =
+  (typeof ChatMessageRole)[keyof typeof ChatMessageRole];
+
+export const ChatMessageRole = {
+  user: "user",
+  assistant: "assistant",
+} as const;
+
+export type ChatMessageAnalysisData = { [key: string]: unknown } | null;
+
+export interface ChatMessage {
+  id: number;
+  sessionId: number;
+  role: ChatMessageRole;
+  content: string;
+  analysisData?: ChatMessageAnalysisData;
+  createdAt: string;
+}
+
+export interface SendMessageBody {
+  content: string;
+}
+
+export interface SendMessageResponse {
+  userMessage: ChatMessage;
+  aiMessage: ChatMessage;
+}
+
+export interface CreateSessionBody {
+  title?: string;
+}

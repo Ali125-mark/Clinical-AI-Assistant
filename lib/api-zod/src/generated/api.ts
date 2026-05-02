@@ -248,6 +248,90 @@ export const AnalyzeCaseResponse = zod.object({
 });
 
 /**
+ * @summary List all chat sessions
+ */
+export const ListChatSessionsResponseItem = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+export const ListChatSessionsResponse = zod.array(ListChatSessionsResponseItem);
+
+/**
+ * @summary Create a new chat session
+ */
+export const CreateChatSessionBody = zod.object({
+  title: zod.string().optional(),
+});
+
+/**
+ * @summary Delete a chat session
+ */
+export const DeleteChatSessionParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary Get messages in a session
+ */
+export const GetChatMessagesParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetChatMessagesResponseItem = zod.object({
+  id: zod.number(),
+  sessionId: zod.number(),
+  role: zod.enum(["user", "assistant"]),
+  content: zod.string(),
+  analysisData: zod.record(zod.string(), zod.unknown()).nullish(),
+  createdAt: zod.string(),
+});
+export const GetChatMessagesResponse = zod.array(GetChatMessagesResponseItem);
+
+/**
+ * @summary Send a message and get AI response
+ */
+export const SendChatMessageParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const SendChatMessageBody = zod.object({
+  content: zod.string(),
+});
+
+export const SendChatMessageResponse = zod.object({
+  userMessage: zod.object({
+    id: zod.number(),
+    sessionId: zod.number(),
+    role: zod.enum(["user", "assistant"]),
+    content: zod.string(),
+    analysisData: zod.record(zod.string(), zod.unknown()).nullish(),
+    createdAt: zod.string(),
+  }),
+  aiMessage: zod.object({
+    id: zod.number(),
+    sessionId: zod.number(),
+    role: zod.enum(["user", "assistant"]),
+    content: zod.string(),
+    analysisData: zod.record(zod.string(), zod.unknown()).nullish(),
+    createdAt: zod.string(),
+  }),
+});
+
+/**
+ * @summary Transcribe audio for chat
+ */
+export const TranscribeChatAudioBody = zod.object({
+  audioBase64: zod.string(),
+  mimeType: zod.string(),
+});
+
+export const TranscribeChatAudioResponse = zod.object({
+  text: zod.string(),
+});
+
+/**
  * @summary Transcribe audio to text (standalone, no case required)
  */
 export const TranscribeAudioStandaloneBody = zod.object({

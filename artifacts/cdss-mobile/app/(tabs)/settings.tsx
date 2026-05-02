@@ -7,42 +7,45 @@ import { useColors } from "@/hooks/useColors";
 export default function AboutScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const topPad = Platform.OS === "web" ? 67 : 0;
 
   const features = [
-    { icon: "mic" as const, title: "Voice Input", desc: "Record and transcribe patient speech using AI" },
-    { icon: "edit-3" as const, title: "Text Input", desc: "Manual entry of symptoms and medical history" },
-    { icon: "cpu" as const, title: "AI Diagnosis", desc: "Differential diagnosis with confidence levels via GPT-5" },
-    { icon: "droplet" as const, title: "Test Recommendations", desc: "Evidence-based lab and imaging suggestions" },
-    { icon: "package" as const, title: "Treatment Guidance", desc: "Guideline-based treatment options with dosing" },
-    { icon: "help-circle" as const, title: "Smart Follow-up", desc: "AI-generated follow-up questions to refine diagnosis" },
-    { icon: "alert-circle" as const, title: "Emergency Alerts", desc: "Automatic detection of critical symptoms" },
+    { icon: "message-circle" as const, title: "محادثة ذكية", desc: "واجهة محادثة طبيعية لوصف الأعراض وتحليلها" },
+    { icon: "mic" as const, title: "إدخال صوتي", desc: "تحويل الصوت إلى نص عبر الذكاء الاصطناعي" },
+    { icon: "cpu" as const, title: "تشخيص ذكي", desc: "تشخيصات تفاضلية مع نسب الثقة" },
+    { icon: "droplet" as const, title: "فحوصات مقترحة", desc: "توصيات مختبرية وأشعة مبنية على الأدلة" },
+    { icon: "package" as const, title: "خيارات علاجية", desc: "علاجات مقترحة مع الجرعات والتنبيهات" },
+    { icon: "help-circle" as const, title: "أسئلة متابعة", desc: "أسئلة ذكية لتحسين دقة التشخيص" },
+    { icon: "alert-circle" as const, title: "تنبيهات الطوارئ", desc: "اكتشاف تلقائي للحالات الحرجة" },
   ];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border, paddingTop: (Platform.OS === "web" ? 67 : insets.top) + 16 }]}>
+        <Text style={[styles.headerTitle, { color: colors.primary }]}>حول التطبيق</Text>
+      </View>
+
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: topPad + 16, paddingBottom: insets.bottom + 100 }]}
+        contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.heroCard, { backgroundColor: colors.primary }]}>
           <Feather name="activity" size={40} color="#fff" />
           <Text style={styles.heroTitle}>CDSS</Text>
-          <Text style={styles.heroSub}>Clinical Decision Support System</Text>
-          <Text style={styles.heroVersion}>AI-Powered · v1.0</Text>
+          <Text style={styles.heroSub}>نظام دعم القرار السريري</Text>
+          <Text style={styles.heroVersion}>مدعوم بالذكاء الاصطناعي · v2.0</Text>
         </View>
 
         <View style={[styles.disclaimerCard, { backgroundColor: colors.emergency + "12", borderColor: colors.emergency }]}>
           <Feather name="alert-triangle" size={18} color={colors.emergency} />
           <View style={styles.flex}>
-            <Text style={[styles.disclaimerTitle, { color: colors.emergency }]}>Important Disclaimer</Text>
+            <Text style={[styles.disclaimerTitle, { color: colors.emergency }]}>تنبيه مهم</Text>
             <Text style={[styles.disclaimerText, { color: colors.emergency + "CC" }]}>
-              This system is for assistance only and does not replace professional medical judgment. Always verify AI-generated suggestions with clinical expertise. Do not use for prescribing or final diagnosis without physician review.
+              هذا النظام للمساعدة فقط وليس أداة تشخيص طبي نهائي. يجب التحقق من جميع المقترحات مع الخبرة السريرية ولا يجوز استخدامه للوصف الطبي النهائي دون مراجعة الطبيب.
             </Text>
           </View>
         </View>
 
-        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>FEATURES</Text>
+        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>الميزات</Text>
         {features.map((f, i) => (
           <View key={i} style={[styles.featureCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={[styles.featureIcon, { backgroundColor: colors.accent + "15" }]}>
@@ -56,13 +59,13 @@ export default function AboutScreen() {
         ))}
 
         <View style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.infoTitle, { color: colors.foreground }]}>Technology Stack</Text>
+          <Text style={[styles.infoTitle, { color: colors.foreground }]}>التقنيات المستخدمة</Text>
           {[
-            ["AI Model", "OpenAI GPT-5.4"],
-            ["Speech-to-Text", "OpenAI Whisper"],
-            ["Backend", "Express.js + PostgreSQL"],
-            ["Mobile", "React Native (Expo)"],
-            ["Database", "PostgreSQL + Drizzle ORM"],
+            ["نموذج الذكاء", "OpenAI GPT-5.4"],
+            ["تحويل الصوت", "OpenAI Whisper"],
+            ["الخادم", "Express.js + PostgreSQL"],
+            ["التطبيق", "React Native (Expo)"],
+            ["قاعدة البيانات", "PostgreSQL + Drizzle ORM"],
           ].map(([label, value]) => (
             <View key={label} style={[styles.infoRow, { borderTopColor: colors.border }]}>
               <Text style={[styles.infoLabel, { color: colors.mutedForeground }]}>{label}</Text>
@@ -77,14 +80,19 @@ export default function AboutScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { paddingHorizontal: 16 },
+  header: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+  },
+  headerTitle: { fontSize: 22, fontWeight: "800" },
+  scroll: { padding: 16, gap: 12 },
   flex: { flex: 1 },
   heroCard: {
     borderRadius: 18,
     padding: 28,
     alignItems: "center",
     gap: 6,
-    marginBottom: 16,
   },
   heroTitle: { color: "#fff", fontSize: 28, fontWeight: "800", letterSpacing: 1 },
   heroSub: { color: "#ffffffCC", fontSize: 14 },
@@ -95,25 +103,23 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     borderWidth: 1.5,
-    marginBottom: 24,
     alignItems: "flex-start",
   },
   disclaimerTitle: { fontSize: 14, fontWeight: "700", marginBottom: 4 },
   disclaimerText: { fontSize: 13, lineHeight: 18 },
-  sectionLabel: { fontSize: 11, fontWeight: "700", letterSpacing: 0.8, marginBottom: 10 },
+  sectionLabel: { fontSize: 11, fontWeight: "700", letterSpacing: 0.8 },
   featureCard: {
     flexDirection: "row",
     gap: 12,
     padding: 14,
     borderRadius: 12,
     borderWidth: 1,
-    marginBottom: 8,
     alignItems: "center",
   },
   featureIcon: { width: 38, height: 38, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   featureTitle: { fontSize: 14, fontWeight: "600", marginBottom: 2 },
   featureDesc: { fontSize: 13, lineHeight: 17 },
-  infoCard: { borderRadius: 14, overflow: "hidden", borderWidth: 1, marginTop: 16 },
+  infoCard: { borderRadius: 14, overflow: "hidden", borderWidth: 1 },
   infoTitle: { fontSize: 14, fontWeight: "700", padding: 14 },
   infoRow: { flexDirection: "row", justifyContent: "space-between", padding: 12, borderTopWidth: 1 },
   infoLabel: { fontSize: 13 },

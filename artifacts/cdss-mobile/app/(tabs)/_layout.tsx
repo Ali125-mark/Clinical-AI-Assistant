@@ -12,16 +12,12 @@ function NativeTabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "list.clipboard", selected: "list.clipboard.fill" }} />
-        <Label>Cases</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="new-case">
-        <Icon sf={{ default: "plus.circle", selected: "plus.circle.fill" }} />
-        <Label>New Case</Label>
+        <Icon sf={{ default: "message.circle", selected: "message.circle.fill" }} />
+        <Label>المحادثات</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
         <Icon sf={{ default: "info.circle", selected: "info.circle.fill" }} />
-        <Label>About</Label>
+        <Label>حول</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -39,10 +35,7 @@ function ClassicTabLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedForeground,
-        headerShown: true,
-        headerStyle: { backgroundColor: colors.card },
-        headerTitleStyle: { color: colors.foreground, fontWeight: "700" },
-        headerShadowVisible: false,
+        headerShown: false,
         tabBarStyle: {
           position: "absolute",
           backgroundColor: isIOS ? "transparent" : colors.card,
@@ -66,34 +59,19 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Patient Cases",
-          tabBarLabel: "Cases",
+          tabBarLabel: "المحادثات",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="list.clipboard" tintColor={color} size={22} />
+              <SymbolView name="message.circle" tintColor={color} size={22} />
             ) : (
-              <Feather name="clipboard" size={22} color={color} />
-            ),
-        }}
-      />
-      <Tabs.Screen
-        name="new-case"
-        options={{
-          title: "New Case",
-          tabBarLabel: "New Case",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="plus.circle" tintColor={color} size={22} />
-            ) : (
-              <Feather name="plus-circle" size={22} color={color} />
+              <Feather name="message-circle" size={22} color={color} />
             ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: "About",
-          tabBarLabel: "About",
+          tabBarLabel: "حول",
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="info.circle" tintColor={color} size={22} />
