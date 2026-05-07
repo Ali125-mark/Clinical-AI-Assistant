@@ -1,8 +1,3 @@
 uploads = []
+generated = []
 outputs = []
-
-[[generated]]
-id = "n-KxBvmmi3M0aIHMwBlW-"
-uri = "file://artifacts/cdss-mobile/assets/images/icon.png"
-type = "image"
-title = "generated_image"

@@ -29,10 +29,10 @@ export default function AboutScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.heroCard, { backgroundColor: colors.primary }]}>
-          <Feather name="activity" size={40} color="#fff" />
-          <Text style={styles.heroTitle}>CDSS</Text>
-          <Text style={styles.heroSub}>نظام دعم القرار السريري</Text>
-          <Text style={styles.heroVersion}>مدعوم بالذكاء الاصطناعي · v2.0</Text>
+          <Feather  size={0} color="#fff" />
+          <Text style={styles.heroTitle}></Text>
+          <Text style={styles.heroSub}></Text>
+          <Text style={styles.heroVersion}></Text>
         </View>
 
         <View style={[styles.disclaimerCard, { backgroundColor: colors.emergency + "12", borderColor: colors.emergency }]}>
@@ -59,13 +59,9 @@ export default function AboutScreen() {
         ))}
 
         <View style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.infoTitle, { color: colors.foreground }]}>التقنيات المستخدمة</Text>
+          <Text style={[styles.infoTitle, { color: colors.foreground }]}></Text>
           {[
-            ["نموذج الذكاء", "OpenAI GPT-5.4"],
-            ["تحويل الصوت", "OpenAI Whisper"],
-            ["الخادم", "Express.js + PostgreSQL"],
-            ["التطبيق", "React Native (Expo)"],
-            ["قاعدة البيانات", "PostgreSQL + Drizzle ORM"],
+        
           ].map(([label, value]) => (
             <View key={label} style={[styles.infoRow, { borderTopColor: colors.border }]}>
               <Text style={[styles.infoLabel, { color: colors.mutedForeground }]}>{label}</Text>

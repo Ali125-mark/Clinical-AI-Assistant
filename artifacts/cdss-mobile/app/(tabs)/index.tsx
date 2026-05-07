@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1,
   },
-  sessionIcon: { width: 44, height: 44, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  sessionIcon: { widtِheight: 44, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   sessionInfo: { flex: 1 },
   sessionTitle: { fontSize: 15, fontWeight: "600", marginBottom: 3 },
   sessionTime: { fontSize: 12 },

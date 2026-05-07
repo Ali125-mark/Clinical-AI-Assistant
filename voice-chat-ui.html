@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المساعد الطبي الصوتي</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 20px 0 10px;
+      font-size: 1.6rem;
+      color: #7dd3fc;
+    }
+
+    .model-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .model-btn {
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 2px solid #334155;
+      background: transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .model-btn.active {
+      border-color: #7dd3fc;
+      background: #1e3a5f;
+      color: #7dd3fc;
+    }
+
+    .chat-box {
+      width: 100%;
+      max-width: 700px;
+      flex: 1;
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 20px;
+      overflow-y: auto;
+      max-height: 50vh;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 80%;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .message.user {
+      background: #1e3a5f;
+      color: #bae6fd;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant {
+      background: #1e2d3d;
+      color: #e2e8f0;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border-right: 3px solid #7dd3fc;
+    }
+
+    .message.assistant .model-tag {
+      font-size: 0.75rem;
+      color: #7dd3fc;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .mic-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #1e3a5f;
+      border: 3px solid #7dd3fc;
+      color: #7dd3fc;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mic-btn:hover { background: #1e4d7a; transform: scale(1.05); }
+    .mic-btn.recording {
+      background: #7f1d1d;
+      border-color: #f87171;
+      color: #f87171;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .text-input-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .text-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .text-input:focus { border-color: #7dd3fc; }
+
+    .send-btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: #1e3a5f;
+      border: none;
+      color: #7dd3fc;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover { background: #1e4d7a; }
+
+    .save-btn {
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: #14532d;
+      border: 1px solid #16a34a;
+      color: #86efac;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .save-btn:hover { background: #166534; }
+    .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .clear-btn {
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid #475569;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover { border-color: #f87171; color: #f87171; }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    .status {
+      font-size: 0.85rem;
+      color: #64748b;
+      min-height: 20px;
+    }
+
+    .loading-dots::after {
+      content: "";
+      animation: dots 1.2s infinite;
+    }
+
+    @keyframes dots {
+      0%   { content: ""; }
+      33%  { content: "."; }
+      66%  { content: ".."; }
+      100% { content: "..."; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🩺 المساعد الطبي الصوتي</h1>
+
+  <div class="model-selector">
+    <button class="model-btn active" onclick="setModel('openai')" id="btn-openai">OpenAI</button>
+    <button class="model-btn" onclick="setModel('gemini')" id="btn-gemini">Gemini</button>
+  </div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="message assistant">
+      <div class="model-tag">المساعد الطبي</div>
+      مرحباً! أنا مساعدك الطبي. يمكنك التحدث معي بالضغط على زر المايكروفون أو كتابة سؤالك.
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="mic-btn" id="micBtn" onclick="toggleRecording()" title="اضغط للتحدث">🎤</button>
+    <div class="status" id="status">اضغط على المايكروفون للتحدث</div>
+    <div class="text-input-row">
+      <input class="text-input" id="textInput" placeholder="أو اكتب سؤالك هنا..." onkeydown="if(event.key==='Enter') sendText()" />
+      <button class="send-btn" onclick="sendText()">إرسال</button>
+    </div>
+    <div class="action-row">
+      <button class="clear-btn" onclick="clearChat()">🗑 مسح المحادثة</button>
+      <button class="save-btn" id="saveBtn" onclick="saveHistory()" disabled>💾 حفظ كنص</button>
+    </div>
+  </div>
+
+  <script>
+    let selectedModel = "openai";
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let conversationHistory = [];
+
+    function setModel(model) {
+      selectedModel = model;
+      document.getElementById("btn-openai").classList.toggle("active", model === "openai");
+      document.getElementById("btn-gemini").classList.toggle("active", model === "gemini");
+    }
+
+    function addMessage(role, text, model = "") {
+      const box = document.getElementById("chatBox");
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      if (role === "assistant") {
+        div.innerHTML = `<div class="model-tag">${model === "gemini" ? "Gemini" : "OpenAI"}</div>${text}`;
+      } else {
+        div.textContent = text;
+      }
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function setStatus(text, loading = false) {
+      const el = document.getElementById("status");
+      el.textContent = text;
+      el.className = loading ? "status loading-dots" : "status";
+    }
+
+    async function sendMessage(text) {
+      if (!text.trim()) return;
+
+      addMessage("user", text);
+      conversationHistory.push({ role: "user", content: text });
+      setStatus("جارٍ المعالجة", true);
+
+      try {
+        const res = await fetch(`/api/voice/chat/${selectedModel}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, history: conversationHistory.slice(-10) }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        addMessage("assistant", data.text, selectedModel);
+        conversationHistory.push({ role: "assistant", content: data.text, model: selectedModel });
+      document.getElementById("saveBtn").disabled = false;
+
+        // تشغيل الصوت
+        if (data.audio) {
+          const audio = new Audio(data.audio);
+          audio.play();
+          setStatus("جارٍ التشغيل...");
+          audio.onended = () => setStatus("اضغط على المايكروفون للتحدث");
+        } else {
+          setStatus("اضغط على المايكروفون للتحدث");
+        }
+      } catch (err) {
+        setStatus(`خطأ: ${err.message}`);
+      }
+    }
+
+    function sendText() {
+      const input = document.getElementById("textInput");
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = "";
+      sendMessage(text);
+    }
+
+    async function saveHistory() {
+      if (!conversationHistory.length) return;
+      try {
+        const res = await fetch("/api/voice/save-history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ history: conversationHistory }),
+        });
+        if (!res.ok) throw new Error("فشل الحفظ");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `محادثة-طبية-${new Date().toLocaleDateString("ar-SA").replace(/\//g, "-")}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setStatus("تم حفظ المحادثة بنجاح ✓");
+      } catch (err) {
+        setStatus(`خطأ في الحفظ: ${err.message}`);
+      }
+    }
+
+    function clearChat() {
+      if (!conversationHistory.length) return;
+      if (!confirm("هل تريد مسح المحادثة الحالية؟")) return;
+      conversationHistory = [];
+      const box = document.getElementById("chatBox");
+      box.innerHTML = `<div class="message assistant">
+        <div class="model-tag">المساعد الطبي</div>
+        مرحباً! أنا مساعدك الطبي. يمكنك التحدث معي بالضغط على زر المايكروفون أو كتابة سؤالك.
+      </div>`;
+      document.getElementById("saveBtn").disabled = true;
+      setStatus("تم مسح المحادثة");
+    }
+
+    async function toggleRecording() {
+      if (isRecording) {
+        mediaRecorder.stop();
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+
+        mediaRecorder.onstop = async () => {
+          isRecording = false;
+          document.getElementById("micBtn").classList.remove("recording");
+          document.getElementById("micBtn").textContent = "🎤";
+          setStatus("جارٍ التعرف على الصوت", true);
+
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+          const formData = new FormData();
+          formData.append("audio", audioBlob, "recording.webm");
+
+          try {
+            const res = await fetch("/api/voice/transcribe", { method: "POST", body: formData });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+
+            if (data.text) {
+              document.getElementById("textInput").value = data.text;
+              await sendMessage(data.text);
+              document.getElementById("textInput").value = "";
+            } else {
+              setStatus("لم يتم التعرف على الصوت، حاول مرة أخرى");
+            }
+          } catch (err) {
+            setStatus(`خطأ في التعرف على الصوت: ${err.message}`);
+          }
+
+          stream.getTracks().forEach((t) => t.stop());
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        document.getElementById("micBtn").classList.add("recording");
+        document.getElementById("micBtn").textContent = "⏹";
+        setStatus("جارٍ التسجيل... اضغط مرة أخرى للإيقاف");
+      } catch (err) {
+        setStatus("تعذّر الوصول إلى المايكروفون: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
